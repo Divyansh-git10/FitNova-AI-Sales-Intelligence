@@ -33,8 +33,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import webrtcvad
-
 from fitnova.core.config import Settings
 from fitnova.core.constants import SpeakerLabel
 from fitnova.core.logging_config import get_logger
@@ -48,7 +46,23 @@ _SAMPLE_WIDTH_BYTES = 2  # 16-bit PCM
 
 
 def diarize_fallback(audio_path: Path, settings: Settings) -> list[DiarizedTurn]:
-    """Run the deterministic VAD + turn-taking diarizer over `audio_path`."""
+    """Run the deterministic VAD + turn-taking diarizer over `audio_path`.
+
+    `webrtcvad` is imported here, not at module top, so this module — and
+    therefore everything that transitively imports it (CLI, API, dashboard)
+    — stays importable even when the speech extras aren't installed. It's
+    only actually required at the moment this function runs.
+    """
+    try:
+        import webrtcvad  # noqa: F401
+    except ImportError as exc:
+        raise DiarizationError(
+            "webrtcvad is not installed, so the fallback diarization backend "
+            "is unavailable. Install the speech extras with "
+            "`pip install -r requirements-speech.txt`, or set "
+            "DIARIZATION_BACKEND=pyannote (requires `pip install pyannote.audio`)."
+        ) from exc
+
     frame_ms = settings.vad_frame_ms if settings.vad_frame_ms in _VALID_FRAME_MS else 30
     if frame_ms != settings.vad_frame_ms:
         logger.warning(
@@ -78,6 +92,8 @@ def diarize_fallback(audio_path: Path, settings: Settings) -> list[DiarizedTurn]
 
 
 def _run_vad(pcm_bytes: bytes, sample_rate: int, frame_ms: int, aggressiveness: int) -> list[bool]:
+    import webrtcvad  # lazy — see diarize_fallback() docstring
+
     vad = webrtcvad.Vad(aggressiveness)
     frame_bytes = int(sample_rate * (frame_ms / 1000.0) * _SAMPLE_WIDTH_BYTES)
     if frame_bytes == 0:

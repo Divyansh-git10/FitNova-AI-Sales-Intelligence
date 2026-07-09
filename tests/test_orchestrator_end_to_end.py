@@ -2,16 +2,17 @@
 
 This is the test that proves the whole loop actually works: a file dropped
 in the inbox comes out the other side as a persisted, classified,
-benchmarked Call with a redacted transcript — the "working prototype"
+benchmarked Call with a redacted transcript - the "working prototype"
 requirement from the assignment, exercised without needing network access
 or a real Whisper model download (the transcriber's model loading is
-monkeypatched; everything else — audio decoding, VAD-based diarization,
+monkeypatched; everything else - audio decoding, VAD-based diarization,
 normalization, PII redaction, classification, DB writes, idempotency,
-retries — runs for real).
+retries - runs for real).
 """
 
 from __future__ import annotations
 
+import importlib.util
 import json
 
 import pytest
@@ -34,6 +35,16 @@ from fitnova.db.models import (
 from fitnova.ingestion.folder_source import FolderSourceAdapter
 from fitnova.pipeline.orchestrator import SpeechPipelineOrchestrator
 from fitnova.transcription.whisper_engine import WhisperTranscriber
+
+# Every test in this module runs the real orchestrator end to end, which
+# means real VAD-based diarization via the default DIARIZATION_BACKEND=
+# fallback. webrtcvad is an optional speech-extras dependency (see
+# requirements-speech.txt) - it isn't installed by the core requirements.txt,
+# so it may legitimately be absent; skip cleanly rather than fail.
+pytestmark = pytest.mark.skipif(
+    importlib.util.find_spec("webrtcvad") is None,
+    reason="webrtcvad not installed - run `pip install -r requirements-speech.txt`",
+)
 
 
 class _FakeInfo:
@@ -251,7 +262,7 @@ def test_failed_call_retries_and_then_succeeds(
     assert "simulated transient" in status.last_error
     session.close()
 
-    # file was NOT claimed on failure — still sits in the inbox for retry
+    # file was NOT claimed on failure - still sits in the inbox for retry
     assert audio_path.exists()
 
     second_results = orchestrator.run_once()

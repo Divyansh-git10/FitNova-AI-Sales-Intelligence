@@ -1,0 +1,38 @@
+# FitNova Sales Call Intelligence — optional speech extras
+#
+# Everything in this file backs the DEFAULT deterministic VAD diarization
+# backend (DIARIZATION_BACKEND=fallback in .env.example). It is kept out of
+# requirements.txt because webrtcvad is a C extension with no prebuilt wheel
+# for recent Python versions on Windows — installing it from source requires
+# Microsoft C++ Build Tools, which most machines don't have, and its build
+# failure would otherwise abort the entire `pip install -r requirements.txt`
+# run before pure-Python packages listed after it (typer, dependency-injector,
+# PyYAML, etc.) ever get installed.
+#
+# Without this file installed:
+#   - `fitnova doctor`, `fitnova dashboard`, `uvicorn fitnova.api.main:app`,
+#     and every other command/route that doesn't touch raw audio work exactly
+#     as before — nothing here is imported until it's actually needed.
+#   - `fitnova ingest` (or any real-audio run) using the default
+#     DIARIZATION_BACKEND=fallback will raise a clear DiarizationError telling
+#     you to install this file, instead of an ImportError or a crash.
+#   - Switching to DIARIZATION_BACKEND=pyannote sidesteps webrtcvad entirely
+#     (see the pyannote.audio note below) if you'd rather not deal with a
+#     C-extension build at all.
+#
+# Install with:
+#   pip install -r requirements-speech.txt
+#
+# On Windows, this requires the "Desktop development with C++" workload from
+# the Visual Studio Build Tools installer:
+#   https://visualstudio.microsoft.com/visual-cpp-build-tools/
+# On Linux, this requires a C compiler and Python headers, e.g.:
+#   sudo apt install build-essential python3.11-dev
+
+webrtcvad>=2.0.10
+
+# pyannote.audio is a separate, higher-fidelity diarization backend
+# (DIARIZATION_BACKEND=pyannote) — heavier still (PyTorch, a HuggingFace
+# token, and a model download), and not needed just to use the default
+# fallback backend above. Install manually if you want it:
+#   pip install pyannote.audio>=3.1.1

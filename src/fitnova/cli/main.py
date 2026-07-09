@@ -512,23 +512,47 @@ def doctor() -> None:
     except Exception as exc:  # noqa: BLE001
         checks.append(("Ollama reachable", False, str(exc)))
 
+    try:
+        import webrtcvad  # noqa: F401
+
+        checks.append(
+            ("Speech extras (webrtcvad)", True, "installed — fallback diarization available")
+        )
+    except ImportError:
+        checks.append(
+            (
+                "Speech extras (webrtcvad)",
+                False,
+                "not installed — run `pip install -r requirements-speech.txt` before processing "
+                "real audio with the default DIARIZATION_BACKEND=fallback",
+            )
+        )
+
+    optional_checks = {"Ollama reachable", "Speech extras (webrtcvad)"}
     table = Table(title="fitnova doctor")
     table.add_column("Check")
     table.add_column("Result")
     table.add_column("Detail")
     all_ok = True
     for name, ok, detail in checks:
-        if name != "Ollama reachable" and not ok:
+        if name not in optional_checks and not ok:
             all_ok = False
-        symbol = "[green]OK[/green]" if ok else "[red]FAIL[/red]"
+        if ok:
+            symbol = "[green]OK[/green]"
+        elif name in optional_checks:
+            symbol = "[yellow]SKIP[/yellow]"
+        else:
+            symbol = "[red]FAIL[/red]"
         table.add_row(name, symbol, detail)
     console.print(table)
 
     if not all_ok:
         console.print(
-            "\n[yellow]One or more required checks failed. Ollama being unreachable is NOT fatal — "
-            "everything else (ingestion, transcription, storage, dashboard) works without it; only "
-            "`fitnova analyze` needs a running Ollama server.[/yellow]"
+            "\n[yellow]One or more required checks failed. Ollama being unreachable and the "
+            "speech extras being absent are NOT fatal — everything else (ingestion, "
+            "transcription, storage, API, dashboard) works without them; only `fitnova analyze` "
+            "needs a running Ollama server, and only the default fallback diarizer on real "
+            "audio needs webrtcvad.[/yellow]"
         )
         raise typer.Exit(code=1)
     console.print("\n[green]All checks passed.[/green]")

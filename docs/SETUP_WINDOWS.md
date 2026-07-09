@@ -42,15 +42,38 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
+`requirements.txt` contains only packages with prebuilt Windows wheels, so
+this always succeeds — no compiler needed. It's enough to run the CLI, the
+API, and the dashboard, and to process audio with transcription.
+
 The last command registers the `fitnova` console command (`fitnova doctor`,
 `fitnova dashboard`, etc.) via this project's `pyproject.toml`
 `[project.scripts]` entry — without it, `fitnova` won't be on PATH and
 you'd need to run `python -m fitnova.cli.main <command>` instead.
 
-`pyannote.audio` (the optional, higher-quality diarization backend) is
-**not** installed by this command — it's heavy, needs a HuggingFace token,
-and the built-in `fallback` VAD-based diarizer works without any of that.
-Only install it if you specifically want pyannote:
+**Optional: speech extras for the default diarization backend.** The
+built-in `fallback` VAD-based diarizer (`DIARIZATION_BACKEND=fallback`,
+the default) uses `webrtcvad`, a C extension with **no prebuilt wheel for
+recent Python on Windows** — installing it requires a compiler. If you
+plan to process real audio and want speaker diarization, install the
+[Visual Studio Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+("Desktop development with C++" workload) once, then:
+
+```powershell
+pip install -r requirements-speech.txt
+```
+
+If you skip this: `fitnova doctor`, `fitnova dashboard`, and
+`uvicorn fitnova.api.main:app` all work exactly the same, and `fitnova
+doctor` will flag "Speech extras (webrtcvad)" as not installed (this is
+informational, not a failure). Only running the diarization step on real
+audio needs it — you'll get a clear error telling you to install this file
+if you try without it.
+
+`pyannote.audio` (the optional, higher-quality diarization backend) is a
+separate, heavier alternative — it needs a HuggingFace token and doesn't
+require `webrtcvad` at all. Only install it if you specifically want
+pyannote instead of the default fallback:
 
 ```powershell
 pip install "pyannote.audio>=3.1.1"
@@ -113,3 +136,11 @@ Open `http://localhost:8501` in your browser.
 - **Long paths** — if you cloned deep inside `C:\Users\...\OneDrive\...`,
   Windows' legacy 260-character path limit can bite. Clone somewhere
   shorter (e.g. `C:\dev\fitnova`) if you hit path-related errors.
+- **`webrtcvad` fails to build** — this is expected if you only ran
+  `pip install -r requirements.txt`; `webrtcvad` deliberately isn't in
+  that file (see Step 3). Install the
+  [Visual Studio Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+  ("Desktop development with C++") and run
+  `pip install -r requirements-speech.txt` instead of trying to add
+  `webrtcvad` to the core requirements file. The CLI, API, and dashboard
+  all work fine without it in the meantime.

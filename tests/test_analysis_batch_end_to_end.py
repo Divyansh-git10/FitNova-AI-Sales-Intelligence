@@ -14,6 +14,7 @@ also works end-to-end through the batch orchestrator, not just in
 
 from __future__ import annotations
 
+import importlib.util
 import json
 
 import pytest
@@ -52,6 +53,17 @@ from fitnova.ingestion.folder_source import FolderSourceAdapter
 from fitnova.pipeline.analysis_orchestrator import AnalysisOrchestrator
 from fitnova.pipeline.orchestrator import SpeechPipelineOrchestrator
 from fitnova.transcription.whisper_engine import WhisperTranscriber
+
+# _seed_processed_call() (used by nearly every test below) seeds its call
+# through the real Phase 3 speech pipeline, which means real VAD-based
+# diarization via the default DIARIZATION_BACKEND=fallback. webrtcvad is an
+# optional speech-extras dependency (see requirements-speech.txt) - it isn't
+# installed by the core requirements.txt, so it may legitimately be absent;
+# skip cleanly rather than fail, same as test_orchestrator_end_to_end.py.
+pytestmark = pytest.mark.skipif(
+    importlib.util.find_spec("webrtcvad") is None,
+    reason="webrtcvad not installed - run `pip install -r requirements-speech.txt`",
+)
 
 DIMENSIONS = (
     "needs_discovery",

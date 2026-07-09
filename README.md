@@ -48,6 +48,19 @@ fitnova doctor
 fitnova dashboard
 ```
 
+`requirements.txt` installs from prebuilt wheels only — it always succeeds,
+on Windows included. Processing **real audio** with the default
+`DIARIZATION_BACKEND=fallback` additionally needs the speech extras
+(`webrtcvad`, a C extension with no prebuilt Windows wheel):
+
+```bash
+pip install -r requirements-speech.txt   # Windows: needs MS C++ Build Tools; see docs/SETUP_WINDOWS.md
+```
+
+Skipping it is fine — the CLI, API, and dashboard all start normally, and
+`fitnova doctor` reports whether the speech extras are installed. Only
+`fitnova ingest`/`fitnova analyze` on real audio need it, same as Ollama.
+
 A local [Ollama](https://ollama.com) server with `.env`'s `OLLAMA_MODEL`
 (default `qwen3:8b`) pulled is required for `fitnova analyze` — everything
 else works without it. `fitnova doctor` tells you exactly what's reachable
@@ -166,20 +179,3 @@ deployment, component) and the requirement-traceability matrix.
 | [`docs/screenshots/`](docs/screenshots/) | Real CLI/API terminal captures + dashboard page previews |
 | [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md) | What's been verified for this release |
 | [`CHANGELOG.md`](CHANGELOG.md) | Change history by phase |
-| [`RELEASE_NOTES.md`](RELEASE_NOTES.md) | What's in this release, known limitations |
-
-## Project structure
-
-```
-config/            scoring weights + issue taxonomy (YAML)
-data/               local runtime data (SQLite DB, audio inbox) — gitignored
-dashboard/          Streamlit app
-docs/               design doc, reports, setup guides, diagrams, screenshots
-scripts/            demo data/audio generation, end-to-end demo, release tools
-src/fitnova/        the application package
-tests/              pytest suite (220 tests)
-```
-
----
-
-Built as an AI Engineering prototype assignment. See `LICENSE` (MIT).

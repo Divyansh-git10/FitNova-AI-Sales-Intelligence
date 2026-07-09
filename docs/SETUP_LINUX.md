@@ -36,15 +36,35 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
+`requirements.txt` contains only packages with prebuilt wheels, so this
+always succeeds. It's enough to run the CLI, the API, the dashboard, and
+transcription.
+
 The last command registers the `fitnova` console command (`fitnova doctor`,
 `fitnova dashboard`, etc.) via this project's `pyproject.toml`
 `[project.scripts]` entry — without it, `fitnova` won't be on PATH and
 you'd need to run `python -m fitnova.cli.main <command>` instead.
 
-`pyannote.audio` (the optional, higher-quality diarization backend) is
-**not** installed by this command — it's heavy, needs a HuggingFace token,
-and the built-in `fallback` VAD-based diarizer works without any of that.
-Only install it if you specifically want pyannote:
+**Optional: speech extras for the default diarization backend.** The
+built-in `fallback` VAD-based diarizer (`DIARIZATION_BACKEND=fallback`,
+the default) uses `webrtcvad`, a C extension that needs a compiler to
+build from source. If you plan to process real audio and want speaker
+diarization:
+
+```bash
+sudo apt install build-essential python3.11-dev   # or your distro's equivalent
+pip install -r requirements-speech.txt
+```
+
+If you skip this: `fitnova doctor`, `fitnova dashboard`, and `uvicorn
+fitnova.api.main:app` all work exactly the same, and `fitnova doctor` will
+flag "Speech extras (webrtcvad)" as not installed (informational, not a
+failure). Only running the diarization step on real audio needs it.
+
+`pyannote.audio` (the optional, higher-quality diarization backend) is a
+separate, heavier alternative — it needs a HuggingFace token and doesn't
+require `webrtcvad` at all. Only install it if you specifically want
+pyannote instead of the default fallback:
 
 ```bash
 pip install "pyannote.audio>=3.1.1"
@@ -101,9 +121,12 @@ you're on a remote machine: `ssh -L 8501:localhost:8501 user@host`).
   its model from HuggingFace on first use; this requires internet access.
   Set `WHISPER_MODEL_SIZE=tiny` in `.env` for a much smaller, faster first
   download while testing.
-- **`webrtcvad` fails to build from source** — it's a C extension; install
-  build tools first (`sudo apt install build-essential python3.11-dev`)
-  and retry `pip install -r requirements.txt`.
+- **`webrtcvad` fails to build from source** — this is expected if you
+  only ran `pip install -r requirements.txt`; `webrtcvad` deliberately
+  isn't in that file (see Step 3). Install build tools
+  (`sudo apt install build-essential python3.11-dev`) and run
+  `pip install -r requirements-speech.txt` instead. The CLI, API, and
+  dashboard all work fine without it in the meantime.
 - **SQLite "disk I/O error" on a network-mounted home directory** (NFS,
   some corporate VDI setups) — point `DATABASE_URL` in `.env` at a path on
   local disk, e.g. `sqlite:////tmp/fitnova/fitnova.db`.

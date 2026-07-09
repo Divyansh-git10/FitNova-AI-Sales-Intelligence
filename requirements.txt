@@ -3,6 +3,14 @@
 # Grouped by pipeline stage so it's obvious what each dependency is for.
 # Pinned to minimum compatible versions, not exact pins, so patch fixes
 # flow through without manual bumping.
+#
+# This file is deliberately restricted to packages that install from a
+# prebuilt wheel on every platform (Windows/macOS/Linux, no C compiler
+# required). `pip install -r requirements.txt` must always succeed on a
+# clean machine and bring up the CLI, API, and dashboard end to end.
+# Native-build speech extras (VAD-based diarization) live in
+# requirements-speech.txt — see that file and docs/SETUP_WINDOWS.md /
+# docs/SETUP_LINUX.md for what's optional and why.
 
 # --- Core / config -----------------------------------------------------
 python-dotenv>=1.0.1
@@ -31,12 +39,15 @@ typer>=0.12.3
 rich>=13.7.1
 
 # --- Speech pipeline (Phase 3) -----------------------------------------------
+# faster-whisper and pydub have prebuilt wheels everywhere (ctranslate2 ships
+# manylinux/macOS/win_amd64 wheels; pydub is pure Python) so they stay here.
+# webrtcvad does NOT — it's a C extension with no prebuilt Windows wheel for
+# recent Python versions, so it lives in requirements-speech.txt instead
+# (see that file). Everything below works without it; only the default VAD
+# fallback diarization backend needs it, and fails with a clear, actionable
+# error — not a crash — if it's missing when actually invoked.
 faster-whisper>=1.0.3
 pydub>=0.25.1
-webrtcvad>=2.0.10
-# pyannote.audio is optional (DIARIZATION_BACKEND=pyannote) — heavy, requires
-# a HuggingFace token and model download. Install manually if you want it:
-#   pip install pyannote.audio>=3.1.1
 
 # --- LLM (Phase 4) -------------------------------------------------------------
 ollama>=0.2.1

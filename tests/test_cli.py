@@ -1,16 +1,26 @@
 """Tests for the Typer CLI: every command runs against the real
 `bootstrap_app()` path (matching how a user actually invokes `fitnova`),
 so each test points `DATABASE_URL` at a private on-disk SQLite file under
-`tmp_path` — never `:memory:` (a fresh CLI process per command would lose
+`tmp_path` - never `:memory:` (a fresh CLI process per command would lose
 an in-memory DB anyway) and never the real `data/fitnova.db`.
 """
 
 from __future__ import annotations
 
+import importlib.util
+
 import pytest
 from typer.testing import CliRunner
 
 runner = CliRunner()
+
+# webrtcvad is an optional speech-extras dependency (see requirements-speech.txt)
+# - only the one test below that ingests real audio through the default
+# fallback diarizer needs it; skip cleanly rather than fail if absent.
+requires_webrtcvad = pytest.mark.skipif(
+    importlib.util.find_spec("webrtcvad") is None,
+    reason="webrtcvad not installed - run `pip install -r requirements-speech.txt`",
+)
 
 
 @pytest.fixture()
@@ -151,6 +161,7 @@ def test_help_lists_all_seven_commands(cli_env):
         assert command in result.output
 
 
+@requires_webrtcvad
 def test_full_pipeline_via_cli_ingest_then_analyze_then_status(cli_env, monkeypatch, make_tone_wav):
     """End-to-end through the CLI itself: ingest a synthetic recording
     (Whisper model loading mocked), analyze it with a mocked Ollama
