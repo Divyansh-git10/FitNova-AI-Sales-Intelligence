@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="334" viewBox="0 0 900 334" font-family="Helvetica, Arial, sans-serif">
+<rect width="900" height="334" fill="#0e1117"/>
+<text x="24" y="34" fill="#e6e6e6" font-size="20" font-weight="bold">FitNova Dashboard — Observability &amp; Health / Processing Queue</text>
+<text x="24" y="56" fill="#9aa0a6" font-size="12">Data-driven layout render (not a literal browser screenshot) — see docs/screenshots/README.md</text>
+<text x="24" y="90" fill="#9aa0a6" font-size="12" font-weight="bold">Call ID</text>
+<text x="100" y="90" fill="#9aa0a6" font-size="12" font-weight="bold">Advisor</text>
+<text x="280" y="90" fill="#9aa0a6" font-size="12" font-weight="bold">Call type</text>
+<text x="460" y="90" fill="#9aa0a6" font-size="12" font-weight="bold">Stage</text>
+<text x="610" y="90" fill="#9aa0a6" font-size="12" font-weight="bold">Status</text>
+<text x="730" y="90" fill="#9aa0a6" font-size="12" font-weight="bold">Retries</text>
+<line x1="24" y1="98" x2="876" y2="98" stroke="#2d3139"/>
+<text x="24" y="120" fill="#e6e6e6" font-size="12">8</text>
+<text x="100" y="120" fill="#e6e6e6" font-size="12">Neha Kapoor</text>
+<text x="280" y="120" fill="#e6e6e6" font-size="12">NO_SPEECH</text>
+<text x="460" y="120" fill="#e6e6e6" font-size="12">CLASSIFIED</text>
+<text x="610" y="120" fill="#3fb950" font-size="12">COMPLETED</text>
+<text x="730" y="120" fill="#e6e6e6" font-size="12">0</text>
+<text x="24" y="146" fill="#e6e6e6" font-size="12">7</text>
+<text x="100" y="146" fill="#e6e6e6" font-size="12">—</text>
+<text x="280" y="146" fill="#e6e6e6" font-size="12">PENDING_METADATA</text>
+<text x="460" y="146" fill="#e6e6e6" font-size="12">CLASSIFIED</text>
+<text x="610" y="146" fill="#3fb950" font-size="12">COMPLETED</text>
+<text x="730" y="146" fill="#e6e6e6" font-size="12">0</text>
+<text x="24" y="172" fill="#e6e6e6" font-size="12">6</text>
+<text x="100" y="172" fill="#e6e6e6" font-size="12">Neha Kapoor</text>
+<text x="280" y="172" fill="#e6e6e6" font-size="12">UNSUPPORTED_LANGUAGE</text>
+<text x="460" y="172" fill="#e6e6e6" font-size="12">CLASSIFIED</text>
+<text x="610" y="172" fill="#3fb950" font-size="12">COMPLETED</text>
+<text x="730" y="172" fill="#e6e6e6" font-size="12">0</text>
+<text x="24" y="198" fill="#e6e6e6" font-size="12">5</text>
+<text x="100" y="198" fill="#e6e6e6" font-size="12">Arjun Mehta</text>
+<text x="280" y="198" fill="#e6e6e6" font-size="12">INTERNAL</text>
+<text x="460" y="198" fill="#e6e6e6" font-size="12">CLASSIFIED</text>
+<text x="610" y="198" fill="#3fb950" font-size="12">COMPLETED</text>
+<text x="730" y="198" fill="#e6e6e6" font-size="12">0</text>
+<text x="24" y="224" fill="#e6e6e6" font-size="12">4</text>
+<text x="100" y="224" fill="#e6e6e6" font-size="12">Priya Sharma</text>
+<text x="280" y="224" fill="#e6e6e6" font-size="12">WRONG_NUMBER</text>
+<text x="460" y="224" fill="#e6e6e6" font-size="12">CLASSIFIED</text>
+<text x="610" y="224" fill="#3fb950" font-size="12">COMPLETED</text>
+<text x="730" y="224" fill="#e6e6e6" font-size="12">0</text>
+<text x="24" y="250" fill="#e6e6e6" font-size="12">3</text>
+<text x="100" y="250" fill="#e6e6e6" font-size="12">Neha Kapoor</text>
+<text x="280" y="250" fill="#e6e6e6" font-size="12">SALES</text>
+<text x="460" y="250" fill="#e6e6e6" font-size="12">CLASSIFIED</text>
+<text x="610" y="250" fill="#3fb950" font-size="12">COMPLETED</text>
+<text x="730" y="250" fill="#e6e6e6" font-size="12">0</text>
+<text x="24" y="276" fill="#e6e6e6" font-size="12">2</text>
+<text x="100" y="276" fill="#e6e6e6" font-size="12">Arjun Mehta</text>
+<text x="280" y="276" fill="#e6e6e6" font-size="12">SALES</text>
+<text x="460" y="276" fill="#e6e6e6" font-size="12">CLASSIFIED</text>
+<text x="610" y="276" fill="#3fb950" font-size="12">COMPLETED</text>
+<text x="730" y="276" fill="#e6e6e6" font-size="12">0</text>
+<text x="24" y="302" fill="#e6e6e6" font-size="12">1</text>
+<text x="100" y="302" fill="#e6e6e6" font-size="12">Priya Sharma</text>
+<text x="280" y="302" fill="#e6e6e6" font-size="12">SALES</text>
+<text x="460" y="302" fill="#e6e6e6" font-size="12">CLASSIFIED</text>
+<text x="610" y="302" fill="#3fb950" font-size="12">COMPLETED</text>
+<text x="730" y="302" fill="#e6e6e6" font-size="12">0</text>
+</svg>

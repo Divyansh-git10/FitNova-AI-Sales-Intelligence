@@ -1,0 +1,57 @@
+[project]
+name = "fitnova-sales-call-intelligence"
+version = "0.1.0"
+description = "AI-powered sales call transcription, scoring, issue detection, and coaching platform for FitNova."
+requires-python = ">=3.11"
+readme = "README.md"
+
+[project.scripts]
+fitnova = "fitnova.cli.main:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra --strict-markers"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+# Deliberate, documented exceptions rather than blind suppressions:
+#   B008  - `Depends(...)` / `typer.Option(...)` as parameter defaults is the
+#           required FastAPI/Typer pattern, not a bug (FastAPI's own docs
+#           recommend disabling this check for exactly this reason).
+#   UP017 - `datetime.UTC` (the 3.11 alias) is functionally identical to
+#           `datetime.timezone.utc`; keeping the latter keeps the codebase
+#           testable on Python 3.10 tooling as well as the target 3.11, with
+#           zero behavior difference either way.
+#   UP037 - SQLAlchemy 2.0 `Mapped["ClassName"]` annotations are deliberately
+#           quoted where `ClassName` is only imported under `TYPE_CHECKING`
+#           (the standard SQLAlchemy pattern for avoiding circular imports);
+#           unquoting them is a real runtime forward-reference-resolution
+#           risk, not a style nit.
+#   UP042 - `class X(str, Enum)` -> `StrEnum` is a broad, purely cosmetic
+#           rename touching every enum in the schema/serialization surface,
+#           with no functional benefit and non-trivial regression risk this
+#           late in the release cycle. Left as-is deliberately.
+ignore = ["B008", "UP017", "UP037", "UP042"]
+
+[tool.ruff.lint.per-file-ignores]
+# Hand-authored demo dialogue (scripts/seed_demo_data.py's DEMO_CALLS) is
+# content, not code — wrapping realistic sentences at 100 chars would hurt
+# readability for no benefit, so line-length is relaxed for this one file.
+"scripts/seed_demo_data.py" = ["E501"]
+# Inline SVG markup f-strings (attribute-heavy <text>/<rect> tags) are
+# naturally long; splitting them mid-tag would hurt readability for no
+# benefit, same reasoning as the demo-dialogue exception above.
+"scripts/render_dashboard_previews.py" = ["E501"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]

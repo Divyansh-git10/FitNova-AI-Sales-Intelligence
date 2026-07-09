@@ -1,0 +1,19 @@
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+.venv/
+venv/
+
+# Generated / runtime data — never commit real call data
+data/fitnova.db*
+data/audio/inbox/*
+!data/audio/inbox/README.md
+data/processed/*
+!data/processed/README.md
+# Regenerated deterministically by scripts/seed_demo_data.py — never commit
+data/audio/demo_samples/
+
+.DS_Store

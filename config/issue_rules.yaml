@@ -1,0 +1,117 @@
+# Issue taxonomy — FitNova Sales Call Intelligence
+#
+# Defines how each closed issue type (fitnova.core.constants.IssueType) is
+# described to the LLM and how strictly a flagged quote must match the real
+# transcript before it's trusted. Loaded and validated by
+# `fitnova.core.config.IssueRulesConfig`:
+#   - every IssueType enum member must have an entry here
+#   - fuzzy_match_threshold and min_confidence_to_surface must be in range
+#
+# The 10 issue *type names* are a closed enum in code (structural — the LLM
+# selects from this fixed set, it cannot invent a new type). Everything
+# about how each type is explained and detected lives here, in plain text a
+# non-engineer can review and edit without touching Python.
+
+fuzzy_match_threshold: 90       # 0-100, rapidfuzz partial-ratio match of quoted_text vs transcript
+min_confidence_to_surface: 0.5  # issues below this LLM-reported confidence are hidden from dashboards by default
+
+issue_types:
+  NO_NEEDS_DISCOVERY:
+    default_severity: HIGH
+    description: >
+      Advisor pitches a plan or price without first asking about the
+      customer's goals, current fitness level, timeline, or budget.
+    detection_guidance: >
+      Look for a pitch or plan recommendation within the advisor's first few
+      turns with no prior discovery question from the advisor.
+    compliance_related: false
+
+  OVER_PROMISING:
+    default_severity: CRITICAL
+    description: >
+      Advisor guarantees a specific outcome (weight loss, results, timeline)
+      that cannot be honestly guaranteed.
+    detection_guidance: >
+      Look for absolute language such as "guaranteed", "definitely", "100%",
+      paired with a specific outcome or timeframe.
+    compliance_related: true
+
+  PRESSURE_SELLING:
+    default_severity: HIGH
+    description: >
+      Advisor creates artificial urgency or scarcity to force an immediate
+      decision.
+    detection_guidance: >
+      Look for language implying the offer disappears if the customer does
+      not decide immediately, or repeated pushing after the customer asks
+      for time to think.
+    compliance_related: true
+
+  PRICE_BEFORE_VALUE:
+    default_severity: MEDIUM
+    description: >
+      Advisor states price before establishing needs or communicating
+      value / benefits.
+    detection_guidance: >
+      Check turn order: does a price figure appear before any needs
+      discovery or benefit explanation?
+    compliance_related: false
+
+  UNDISCLOSED_COST:
+    default_severity: CRITICAL
+    description: >
+      Additional fees or charges are revealed only after the customer has
+      committed, or are never disclosed at all.
+    detection_guidance: >
+      Look for cost-related language appearing only after the customer has
+      already agreed, or a purchase discussion with no cost mentioned at all.
+    compliance_related: true
+
+  NO_TRIAL_BOOKING:
+    default_severity: MEDIUM
+    description: >
+      The call shows customer interest but ends without a concrete trial
+      session date/time being proposed and confirmed.
+    detection_guidance: >
+      Check the final turns of the call for a specific booking (date, time,
+      mode) versus a vague "we'll follow up" or "I'll call you back".
+    compliance_related: false
+
+  INTERRUPTING_CUSTOMER:
+    default_severity: LOW
+    description: >
+      Advisor repeatedly talks over or cuts off the customer.
+    detection_guidance: >
+      Use diarization turn timing (short customer turns immediately followed
+      by advisor speech, or overlapping segments) as the primary signal.
+    compliance_related: false
+
+  MISSELLING:
+    default_severity: CRITICAL
+    description: >
+      Advisor makes claims about the product or plan that contradict its
+      actual terms, or contradict something said earlier in the same call.
+    detection_guidance: >
+      Compare specific claims against known plan terms if available, and
+      flag internally inconsistent claims within the same transcript.
+    compliance_related: true
+
+  WEAK_CLOSING:
+    default_severity: LOW
+    description: >
+      Call ends without a clear summary or next step, leaving the
+      customer's status ambiguous.
+    detection_guidance: >
+      Check the last 1-2 advisor turns for a summary statement and an
+      explicit next step.
+    compliance_related: false
+
+  LOW_EMPATHY:
+    default_severity: MEDIUM
+    description: >
+      Customer expresses a concern (cost, time, doubt, past bad experience)
+      and the advisor moves on without acknowledging it.
+    detection_guidance: >
+      Pair each customer concern statement with the advisor's very next
+      turn; flag if there is no acknowledgment before changing topic.
+    compliance_related: false

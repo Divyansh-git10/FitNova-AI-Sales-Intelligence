@@ -1,0 +1,28 @@
+# Scoring rubric weights — FitNova Sales Call Intelligence
+#
+# These weights control how the 9 per-dimension scores roll up into
+# `scores.overall_quality`. They are loaded and validated by
+# `fitnova.core.config.ScoringWeightsConfig` at bootstrap time:
+#   - all 9 dimensions below must be present
+#   - the weights must sum to 1.0 (+/- 0.01 tolerance for float rounding)
+#
+# Compliance and needs-discovery are weighted highest because they map
+# directly to the business risks called out in the assignment: mis-selling,
+# undisclosed cost, and weak discovery are what actually damage trust and
+# create legal/reputational exposure — not just call "polish".
+#
+# To change how call quality is judged, edit this file. No code change
+# required, no redeploy of the scoring engine needed.
+
+scoring_version: "v1.0.0"
+
+weights:
+  needs_discovery: 0.15
+  rapport: 0.05
+  empathy: 0.05
+  listening: 0.05
+  product_knowledge: 0.10
+  objection_handling: 0.10
+  compliance: 0.25
+  trial_booking: 0.15
+  closing: 0.10

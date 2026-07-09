@@ -1,0 +1,18 @@
+/* theme.css — shared card styling / severity color-coding (Phase 5).
+   Loaded by every page via st.markdown(..., unsafe_allow_html=True). */
+
+div[data-testid="stMetric"] {
+    background-color: rgba(148, 163, 184, 0.08);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 10px;
+    padding: 12px 14px 8px 14px;
+}
+
+div[data-testid="stMetricLabel"] {
+    font-weight: 600;
+    opacity: 0.85;
+}
+
+section[data-testid="stSidebar"] {
+    border-right: 1px solid rgba(148, 163, 184, 0.25);
+}
