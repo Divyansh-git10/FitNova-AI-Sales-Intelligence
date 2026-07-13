@@ -7,6 +7,8 @@
 ![License](https://img.shields.io/badge/license-MIT-informational?style=flat-square)
 ![Runs Locally](https://img.shields.io/badge/runs-100%25%20locally-9146FF?style=flat-square)
 
+<sub>Badges reflect the current `main` — reproduce locally: `pytest` (tests) · `ruff check .` and `black --check .` (lint).</sub>
+
 AI-powered pipeline that ingests, transcribes, diarizes, scores, and flags
 issues in sales calls, and surfaces the results through a REST API, a
 CLI, and a role-based Streamlit dashboard — entirely on your own machine.
@@ -18,6 +20,11 @@ viewed on the dashboard or pulled via the API, end to end, locally.
 
 <p align="center">
   <img src="docs/architecture/architecture.png" alt="Architecture diagram" width="720">
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/dashboard_home_preview.svg" alt="Streamlit dashboard — Home" width="49%">
+  <img src="docs/screenshots/cli_doctor.svg" alt="CLI — fitnova doctor health check" width="49%">
 </p>
 
 ## Contents

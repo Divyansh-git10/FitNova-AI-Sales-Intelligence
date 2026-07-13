@@ -29,13 +29,15 @@ def create_app() -> FastAPI:
         version="0.1.0",
     )
 
-    # Local-first prototype: CORS is wide open so the dashboard (a separate
+    # Local-first prototype: CORS is open so the dashboard (a separate
     # Streamlit process on a different port) can call this API directly.
-    # Tighten this before any real multi-tenant deployment.
+    # `allow_credentials=False` is deliberate: auth is a header (`X-Role`),
+    # not cookies, and browsers reject a wildcard `allow_origins` combined
+    # with credentials. Tighten `allow_origins` before any real deployment.
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
-        allow_credentials=True,
+        allow_credentials=False,
         allow_methods=["*"],
         allow_headers=["*"],
     )

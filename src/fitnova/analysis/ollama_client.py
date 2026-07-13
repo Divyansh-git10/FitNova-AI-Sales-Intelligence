@@ -15,12 +15,19 @@ Section 9, "vendor API failures, retries" — before surfacing as
 
 from __future__ import annotations
 
+import httpx
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 from fitnova.core.config import Settings
 from fitnova.core.logging_config import get_logger
 
 logger = get_logger(__name__)
+
+# Only genuinely transient transport failures are worth retrying — a refused
+# connection (Ollama not started yet) or a timeout. Anything else (a malformed
+# response, a programming error) should surface immediately rather than being
+# retried behind the caller's back.
+_RETRYABLE_TRANSPORT_ERRORS = (httpx.TransportError, ConnectionError, TimeoutError)
 
 
 class OllamaConnectionError(Exception):
@@ -64,7 +71,7 @@ class OllamaClient:
             ) from exc
 
     @retry(
-        retry=retry_if_exception_type(Exception),
+        retry=retry_if_exception_type(_RETRYABLE_TRANSPORT_ERRORS),
         stop=stop_after_attempt(2),
         wait=wait_exponential(multiplier=0.5, min=0.5, max=4),
         reraise=True,
